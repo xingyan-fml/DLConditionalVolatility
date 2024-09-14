@@ -30,5 +30,3 @@ Run the .py scripts in each "collect*" folder. These scripts will generate all t
 Note:
 
 There may be some randomness in the results, but overall, they should be quite close to those reported in the paper.
-
-This material is currently for review purposes only. Please do not distribute. It will be made public after the official publication.
