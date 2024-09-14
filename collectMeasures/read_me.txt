@@ -1,0 +1,1 @@
+Fama-French factor data was downloaded from https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html on December 20, 2023.
