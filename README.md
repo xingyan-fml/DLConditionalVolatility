@@ -14,19 +14,11 @@ Steps for Replicating Results
 
 1. Setup: Make sure you know how to use Python and have installed the following packages: pandas, PyTorch, statsmodels, etc.
 
-2. Data Preprocessing:
+2. Data Preprocessing: Run preprocessing.py located in the "preprocessing" folder. This will create an usa_new.csv file with data of 153 firm characteristics and 1-month-ahead excess returns, as used in Jensen et al. (2023).
 
-Run preprocessing.py located in the "preprocessing" folder. This will create an usa_new.csv file with data of 153 firm characteristics and 1-month-ahead excess returns, as used in Jensen et al. (2023).
+3. Neural Network Training and Prediction: Run exper_hnn.py in the "hnn" folder. This script performs neural network training and prediction. A GPU is recommended, preferably an RTX 3090 or 4090. The process may take one or two days. The "results" folder will be created with the necessary outcomes.
 
-3. Neural Network Training and Prediction:
-
-Run exper_hnn.py in the "hnn" folder. This script performs neural network training and prediction. A GPU is recommended, preferably an RTX 3090 or 4090. The process may take one or two days. The "results" folder will be created with the necessary outcomes.
-
-4. Result Collection:
-
-Run the .py scripts in each "collect*" folder. These scripts will generate all the numbers, tables, and figures in our paper.
+4. Result Collection: Run the .py scripts in each "collect*" folder. These scripts will generate all the numbers, tables, and figures in our paper.
 
 
-Note:
-
-There may be some randomness in the results, but overall, they should be quite close to those reported in the paper.
+Note: There may be some randomness in the results, but overall, they should be quite close to those reported in the paper.
