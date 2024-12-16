@@ -9,6 +9,17 @@ from arch import arch_model
 
 #==============================================================================
 
+def cal_corr(data, mean, std):
+    statistics = []
+    pvalues = []
+    for date, ddata in data.groupby('date'):
+        res = stats.pearsonr(ddata[mean], ddata[std])
+        statistics.append(res.statistic)
+        pvalues.append(res.pvalue)
+    return np.mean(statistics), np.mean(pvalues)
+
+#==============================================================================
+
 Models = ['[32]', '[32, 16]', '[32, 16, 8]', '[32, 16, 8, 4]', '[32, 16, 8, 4, 2]']
 Model_names = ['NN1', 'NN2', 'NN3', 'NN4', 'NN5']
 vols = ['ours', 'ivol', 'ivol_ff3', 'rvol', 'garch', 'gjr-garch', 'linear']
@@ -61,15 +72,13 @@ preds = pd.concat(collect, ignore_index = True)
 
 for i, model in enumerate(Models):
     data = pd.read_csv('../hnn/results/'+model+'_0.001_1e-05_1_10.csv')
-    data['std'] = np.sqrt(data['var'])
     data = data.drop(['var', 'var2'], axis = 1)
-    
     data = pd.merge(data, preds, how = 'inner', on = ['date', 'id'])
     data['std'] = data['cv']
     
-    res = stats.pearsonr(data['mean'], data['std'])
-    corrs.loc[Model_names[i], 'garch'] = res.statistic
-    pvalues.loc[Model_names[i], 'garch'] = res.pvalue
+    statistic, pvalue = cal_corr(data, 'mean', 'std')
+    corrs.loc[Model_names[i], 'garch'] = statistic
+    pvalues.loc[Model_names[i], 'garch'] = pvalue
 
 #==============================================================================
 
@@ -106,15 +115,13 @@ preds = pd.concat(collect, ignore_index = True)
 
 for i, model in enumerate(Models):
     data = pd.read_csv('../hnn/results/'+model+'_0.001_1e-05_1_10.csv')
-    data['std'] = np.sqrt(data['var'])
     data = data.drop(['var', 'var2'], axis = 1)
-    
     data = pd.merge(data, preds, how = 'inner', on = ['date', 'id'])
     data['std'] = data['cv']
     
-    res = stats.pearsonr(data['mean'], data['std'])
-    corrs.loc[Model_names[i], 'gjr-garch'] = res.statistic
-    pvalues.loc[Model_names[i], 'gjr-garch'] = res.pvalue
+    statistic, pvalue = cal_corr(data, 'mean', 'std')
+    corrs.loc[Model_names[i], 'gjr-garch'] = statistic
+    pvalues.loc[Model_names[i], 'gjr-garch'] = pvalue
 
 #==============================================================================
 
@@ -122,9 +129,9 @@ for i, model in enumerate(Models):
     data = pd.read_csv('linear/results/'+model+'_0.001_1e-05_1_10.csv')
     data['std'] = np.sqrt(data['var'])
     data = data.drop(['var', 'var2'], axis = 1)
-    res = stats.pearsonr(data['mean'], data['std'])
-    corrs.loc[Model_names[i], 'linear'] = res.statistic
-    pvalues.loc[Model_names[i], 'linear'] = res.pvalue
+    statistic, pvalue = cal_corr(data, 'mean', 'std')
+    corrs.loc[Model_names[i], 'linear'] = statistic
+    pvalues.loc[Model_names[i], 'linear'] = pvalue
 
 #==============================================================================
 
@@ -132,25 +139,25 @@ for i, model in enumerate(Models):
     data = pd.read_csv('../hnn/results/'+model+'_0.001_1e-05_1_10.csv')
     data['std'] = np.sqrt(data['var'])
     data = data.drop(['var', 'var2'], axis = 1)
-    res = stats.pearsonr(data['mean'], data['std'])
-    corrs.loc[Model_names[i], 'ours'] = res.statistic
-    pvalues.loc[Model_names[i], 'ours'] = res.pvalue
+    statistic, pvalue = cal_corr(data, 'mean', 'std')
+    corrs.loc[Model_names[i], 'ours'] = statistic
+    pvalues.loc[Model_names[i], 'ours'] = pvalue
     
     usa = pd.read_csv('../preprocessing/usa_new.csv')[['eom', 'id', 'ivol_capm_252d', 'ivol_ff3_21d', 'rvol_21d']]
     usa.columns = ['date', 'id', 'ivol_capm_252d', 'ivol_ff3_21d', 'rvol_21d']
     data = pd.merge(data, usa, how = 'left', on = ['date', 'id'])
     
-    res = stats.pearsonr(data['mean'], data['ivol_capm_252d'])
-    corrs.loc[Model_names[i], 'ivol'] = res.statistic
-    pvalues.loc[Model_names[i], 'ivol'] = res.pvalue
+    statistic, pvalue = cal_corr(data, 'mean', 'ivol_capm_252d')
+    corrs.loc[Model_names[i], 'ivol'] = statistic
+    pvalues.loc[Model_names[i], 'ivol'] = pvalue
     
-    res = stats.pearsonr(data['mean'], data['ivol_ff3_21d'])
-    corrs.loc[Model_names[i], 'ivol_ff3'] = res.statistic
-    pvalues.loc[Model_names[i], 'ivol_ff3'] = res.pvalue
+    statistic, pvalue = cal_corr(data, 'mean', 'ivol_ff3_21d')
+    corrs.loc[Model_names[i], 'ivol_ff3'] = statistic
+    pvalues.loc[Model_names[i], 'ivol_ff3'] = pvalue
     
-    res = stats.pearsonr(data['mean'], data['rvol_21d'])
-    corrs.loc[Model_names[i], 'rvol'] = res.statistic
-    pvalues.loc[Model_names[i], 'rvol'] = res.pvalue
+    statistic, pvalue = cal_corr(data, 'mean', 'rvol_21d')
+    corrs.loc[Model_names[i], 'rvol'] = statistic
+    pvalues.loc[Model_names[i], 'rvol'] = pvalue
 
 #==============================================================================
 
@@ -159,8 +166,7 @@ with open("create_latex_of_correlations.txt", 'w') as file:
     for model in Model_names:
         file.write(model)
         for vol in corrs.columns:
-            # file.write(" & \\makecell{{{:.2f}\\\\ ({:.2f})}}".format(corrs.loc[model, vol], pvalues.loc[model, vol]))
-            file.write(" & {:.2f}".format(corrs.loc[model, vol]))
+            file.write(" & \\makecell{{{:.2f}\\\\ ({:.2f})}}".format(corrs.loc[model, vol], pvalues.loc[model, vol]))
         file.write(" \\\\\n")
 
 
