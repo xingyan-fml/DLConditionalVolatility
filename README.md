@@ -1,6 +1,6 @@
 This repository contains the code used for the paper "Deep Learning of Conditional Volatility and Negative Risk-Return Relation" by Wenxuan Ma and Xing Yan (2024). Please cite this paper if you are using the code:
 
-Ma, Wenxuan and Yan, Xing, Deep Learning of Conditional Volatility and Negative Risk-Return Relation (September 14, 2024). Available at SSRN: https://ssrn.com/abstract=4956075
+Ma, Wenxuan and Yan, Xing, Deep Learning of Conditional Volatility and Negative Risk-Return Relation (September 14, 2024).
 
 
 Data Source and Preparation
